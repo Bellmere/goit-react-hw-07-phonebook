@@ -1,0 +1,28 @@
+.filter__wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 480px;
+}
+
+.filter__label {
+    display: flex;
+    justify-content: flex-start;
+    font-size: 24px;
+    line-height: 1.2;
+    
+}
+
+.filter__input {
+    width: 240px;
+    padding: 10px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    border: none;
+    outline: #000 1px solid;
+}
+
+.filter__input:focus {
+    outline-color: rgb(53, 170, 170);
+    box-shadow: 0px 0px 12px 4px rgba(53, 170, 170, 0.12);
+}
