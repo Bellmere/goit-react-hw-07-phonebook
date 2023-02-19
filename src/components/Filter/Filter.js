@@ -2,13 +2,17 @@ import css from '../Filter/Filter.module.css';
 import { nanoid } from 'nanoid';
 import { useDispatch, useSelector } from 'react-redux';
 import { change } from 'Redux/filterSlice';
+import { getFilter } from 'Redux/Selectors';
 
 const filterInputId = nanoid();
 
 export const Filter = () => {
     const dispatch = useDispatch();
-    const filter = useSelector(state => state.filter);
-    const changeFilter = e => dispatch(change(e.target.value));
+    const filter = useSelector(getFilter);
+
+    const handleChange = e => {
+        dispatch(change(e.target.value));
+      };
 
     return (
         <div className={css.filter__wrapper}>
@@ -24,7 +28,7 @@ export const Filter = () => {
             type="text"
             name="filter"
             value={filter}
-            onChange={changeFilter}
+            onChange={handleChange}
             />
         </div>
     );

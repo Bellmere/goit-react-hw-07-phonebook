@@ -1,49 +1,52 @@
-import css from '../ContactForm/ContactForm.module.css';
+import React from 'react';
 import { useState } from 'react';
-import { nanoid } from 'nanoid';
 import { useDispatch, useSelector } from 'react-redux';
-import { add } from 'Redux/contactsSlice';
+import { nanoid } from 'nanoid';
+import { addContact } from 'Redux/operations';
+import { getContacts } from 'Redux/Selectors';
+import css from '../ContactForm/ContactForm.module.css';
+
+  const nameInputId = nanoid();
+  const numberInputId = nanoid();
 
 export const ContactForm = () => {
-    const [name, setName] = useState('');
-    const [number, setNumber] = useState('');
-    const nameInputId = nanoid();
-    const numberInputId = nanoid();
-    const contacts = useSelector(state => state.contacts.items);
 
-    const dispatch = useDispatch();
+  const [name, setName] = useState('');
+  const [number, setNumber] = useState('');
+  const dispatch = useDispatch();
+  const items = useSelector(getContacts);
 
-    const handleChange = e => {
-        const { name, value } = e.target;
-        switch (name) {
-            case 'name':
-                setName(value)
-                break;
-            case 'number':
-                setNumber(value);
-                break;
-        
-            default:
-                break;
-        }
-    };
-
-    const handleSubmit = e => {
-        e.preventDefault();
-        const id = nanoid();
-        const contact = { id, name, number };
-        if (contacts.findIndex(item => item.name?.toLowerCase() === contact.name?.toLowerCase()) !== -1) {
-            alert(`${contact.name} is already in contacts.`);
-            return;
-          }
-        dispatch(add(contact));
-        reset();
-    };
-
-    const reset = () => {
-        setName('');
-        setNumber('');
+  const handleChange = e => {
+    const { name, value } = e.target;
+    switch (name) {
+        case 'name':
+            setName(value)
+            break;
+        case 'number':
+            setNumber(value);
+            break;
+    
+        default:
+            break;
     }
+  };
+
+  const handleSubmit = e => {
+    e.preventDefault();
+      const contactsList = [...items];
+    if (contactsList.findIndex(contact => name === contact.name) !== -1) {
+      alert(`${name} is already in contacts.`);
+      return;
+    }
+
+    dispatch(addContact({ name: name, phone: number }));
+    reset();
+  };
+
+  const reset = () => {
+    setName('');
+    setNumber('');
+}
 
     return (
         <form onSubmit={handleSubmit} className={css.form}>
@@ -79,4 +82,4 @@ export const ContactForm = () => {
             </button>
         </form>
     );
-}
+};
