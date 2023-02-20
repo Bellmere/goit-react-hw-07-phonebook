@@ -1,10 +1,11 @@
 import React from 'react';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { nanoid } from 'nanoid';
 import { addContact } from 'Redux/operations';
-import { getContacts } from 'Redux/Selectors';
+import { getIsLoading, getContacts } from 'Redux/Selectors';
 import css from '../ContactForm/ContactForm.module.css';
+import { Loader } from 'components/Loader/Loader';
 
   const nameInputId = nanoid();
   const numberInputId = nanoid();
@@ -15,6 +16,10 @@ export const ContactForm = () => {
   const [number, setNumber] = useState('');
   const dispatch = useDispatch();
   const items = useSelector(getContacts);
+  const isLoading = useSelector(getIsLoading);
+  const flag = useRef(false);
+
+  console.log(items);
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -33,14 +38,21 @@ export const ContactForm = () => {
 
   const handleSubmit = e => {
     e.preventDefault();
+    flag.current = true;
+    console.log(flag.current);
       const contactsList = [...items];
-    if (contactsList.findIndex(contact => name === contact.name) !== -1) {
+    if (contactsList.findIndex(contact => name.toLocaleLowerCase() === contact.name.toLocaleLowerCase()) !== -1) {
       alert(`${name} is already in contacts.`);
+      flag.current = false;
       return;
     }
-
-    dispatch(addContact({ name: name, phone: number }));
-    reset();
+    try {
+      dispatch(addContact({ name: name, phone: number }));
+      reset();
+    } catch (error) {
+      console.log(error);
+    }
+    console.log(flag.current);
   };
 
   const reset = () => {
@@ -78,7 +90,7 @@ export const ContactForm = () => {
             type='submit'
             className={css.form__submitBtn}
             >
-                Add Contact
+                {flag.current === true? (<Loader/>) : (<span>Add Contact</span>)}
             </button>
         </form>
     );
