@@ -1,7 +1,8 @@
 import { delContact } from 'Redux/operations';
 import { useSelector, useDispatch } from 'react-redux';
-import { getIsLoading,getFilter, getContacts } from 'Redux/Selectors';
+import { getFilter, getContacts } from 'Redux/Selectors';
 import { Loader } from 'components/Loader/Loader';
+import { useState } from 'react';
 import css from '../ContactList/ContactList.module.css';
 
 const getNormalizedContacts = (contacts, filter) => {
@@ -19,10 +20,19 @@ export const ContactList = () => {
   const contacts = useSelector(getContacts);
   const filter = useSelector(getFilter);
   const normalizedContacts = getNormalizedContacts(contacts, filter);
-  const isLoading = useSelector(getIsLoading);
+  const [loading, setLoading] = useState('');
 
   const dispatch = useDispatch();
-  const handleDelete = id => dispatch(delContact(id));
+  const handleDelete = async id => {
+    setLoading(id);
+    try {
+      await dispatch(delContact(id));
+      setLoading('');
+    } catch (error) {
+      console.log(error);
+    }
+  } 
+
 
     return (
         <div>
@@ -35,8 +45,9 @@ export const ContactList = () => {
                         className={css.contact__list__btn} 
                         onClick={() => handleDelete(contact.id)}
                         >
-                            Delete
-                            {isLoading  && <Loader />}
+                          {
+                            loading === contact.id ? (<Loader />) : (<span>Delete</span>)
+                          }
                         </button>
                     </li>
                 ))}
